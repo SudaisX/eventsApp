@@ -1,7 +1,12 @@
-export default function eventPage() {
+import { useRouter } from 'next/router';
+import Layout from '../../components/Layout';
+
+export default function EventPage() {
+    const router = useRouter();
+
     return (
-        <div>
+        <Layout>
             <h1>random event jdfasd</h1>
-        </div>
+        </Layout>
     );
 }
