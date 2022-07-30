@@ -13,6 +13,10 @@ export default function EventPage({ evt }) {
     return (
         <Layout>
             <div className={styles.event}>
+                <Link href='/events'>
+                    <a className={styles.back}> {'<'} Go Back</a>
+                </Link>
+
                 <div className={styles.controls}>
                     <Link href={`/events/edit/${evt.id}`}>
                         <a>
@@ -34,25 +38,18 @@ export default function EventPage({ evt }) {
                     <div className={styles.image}>
                         <Image
                             src={evt.image.data.attributes.url}
-                            width={960}
-                            height={600}
+                            layout='fill'
+                            objectFit='contain'
                             alt='image'
                         />
                     </div>
                 )}
-
-                <h3>Performers</h3>
-                <p>{evt.performers}</p>
 
                 <h3>Description</h3>
                 <p>{evt.description}</p>
 
                 <h3>Venue: {evt.venue}</h3>
                 <p>{evt.address}</p>
-
-                <Link href='/events'>
-                    <a className={styles.back}> {'<'} Go Back</a>
-                </Link>
             </div>
         </Layout>
     );

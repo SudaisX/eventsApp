@@ -10,6 +10,8 @@
 .img {
     flex: 1;
     margin: 10px;
+    position: relative;
+    height: 150px;
 }
 
 .info {

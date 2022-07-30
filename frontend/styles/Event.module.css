@@ -13,6 +13,8 @@
 
 .image {
     margin-bottom: 20px;
+    position: relative;
+    height: 600px;
 }
 
 .controls {
@@ -28,5 +30,6 @@
 
 .back {
     display: block;
-    margin-top: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }

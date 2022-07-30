@@ -12,8 +12,8 @@ const EventItem = ({ evt }) => {
                             ? evt.image.data.attributes.formats.thumbnail.url
                             : '/images/event-default.png'
                     }
-                    width={170}
-                    height={100}
+                    layout='fill'
+                    objectFit='contain'
                     alt='img'
                 />
             </div>
