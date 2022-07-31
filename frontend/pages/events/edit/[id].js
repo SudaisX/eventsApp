@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
+import { FaImage } from 'react-icons/fa';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Form.module.css';
 import Layout from '@/components/Layout';
@@ -19,6 +21,9 @@ export default function EditEvenPage({ evt }) {
         time: evt.time,
         description: evt.description,
     });
+    const [imagePreview, setImagePreview] = useState(
+        evt.image ? evt.image.data.attributes.formats.thumbnail.url : null
+    );
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
@@ -121,6 +126,33 @@ export default function EditEvenPage({ evt }) {
                         value={values.description}
                         onChange={inputChangeHandler}></textarea>
                 </div>
+
+                <h2>Event Image</h2>
+                <div style={{ position: 'relative', height: '250px' }}>
+                    {imagePreview ? (
+                        <Image
+                            src={
+                                evt.image &&
+                                evt.image.data &&
+                                evt.image.data.attributes.formats.medium.url
+                            }
+                            layout='fill'
+                            objectFit='contain'
+                            alt='img'
+                        />
+                    ) : (
+                        <div>
+                            <h1>No image uploaded</h1>
+                        </div>
+                    )}
+                </div>
+
+                <div>
+                    <button className='btn-secondary'>
+                        <FaImage /> Set Image
+                    </button>
+                </div>
+
                 <input type='submit' value='Update Event' className='btn' />
             </form>
         </Layout>
