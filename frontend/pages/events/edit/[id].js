@@ -3,20 +3,21 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import moment from 'moment';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Form.module.css';
-import Layout from '../../components/Layout';
+import Layout from '@/components/Layout';
 
-export default function AddEventPage() {
+export default function EditEvenPage({ evt }) {
     const router = useRouter();
 
     const [values, setValues] = useState({
-        name: '',
-        venue: '',
-        address: '',
-        date: '',
-        time: '',
-        description: '',
+        name: evt.name,
+        venue: evt.venue,
+        address: evt.address,
+        date: evt.date,
+        time: evt.time,
+        description: evt.description,
     });
 
     const onSubmitHandler = async (e) => {
@@ -29,8 +30,8 @@ export default function AddEventPage() {
             return toast.error('Please fill in all fields');
         }
 
-        const res = await fetch(`${API_URL}/api/events`, {
-            method: 'POST',
+        const res = await fetch(`${API_URL}/api/events/${evt.id}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -54,7 +55,7 @@ export default function AddEventPage() {
     return (
         <Layout title='Add Event | Events App'>
             <Link href='/events'>Go Back</Link>
-            <h1>Add Event</h1>
+            <h1>Edit Event</h1>
             <ToastContainer />
 
             <form onSubmit={onSubmitHandler} className={styles.form}>
@@ -96,7 +97,7 @@ export default function AddEventPage() {
                             type='date'
                             name='date'
                             id='date'
-                            value={values.date}
+                            value={moment(values.date).format('yyyy-MM-DD')}
                             onChange={inputChangeHandler}
                         />
                     </div>
@@ -120,8 +121,19 @@ export default function AddEventPage() {
                         value={values.description}
                         onChange={inputChangeHandler}></textarea>
                 </div>
-                <input type='submit' value='Add Event' className='btn' />
+                <input type='submit' value='Update Event' className='btn' />
             </form>
         </Layout>
     );
+}
+
+export async function getServerSideProps({ params: { id } }) {
+    const res = await fetch(`${API_URL}/api/events?filters[id][$eq]=${id}&populate=*`);
+    const { data } = await res.json();
+    const evt = data.map((evt) => ({ id: evt.id, ...evt.attributes }))[0];
+    return {
+        props: {
+            evt,
+        },
+    };
 }
