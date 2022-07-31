@@ -9,6 +9,7 @@ import { FaImage } from 'react-icons/fa';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Form.module.css';
 import Layout from '@/components/Layout';
+import Modal from '@/components/Modal';
 
 export default function EditEvenPage({ evt }) {
     const router = useRouter();
@@ -24,6 +25,7 @@ export default function EditEvenPage({ evt }) {
     const [imagePreview, setImagePreview] = useState(
         evt.image ? evt.image.data.attributes.formats.thumbnail.url : null
     );
+    const [showModal, setShowModal] = useState(false);
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
@@ -127,34 +129,41 @@ export default function EditEvenPage({ evt }) {
                         onChange={inputChangeHandler}></textarea>
                 </div>
 
-                <h2>Event Image</h2>
-                <div style={{ position: 'relative', height: '250px' }}>
-                    {imagePreview ? (
-                        <Image
-                            src={
-                                evt.image &&
-                                evt.image.data &&
-                                evt.image.data.attributes.formats.medium.url
-                            }
-                            layout='fill'
-                            objectFit='contain'
-                            alt='img'
-                        />
-                    ) : (
-                        <div>
-                            <h1>No image uploaded</h1>
-                        </div>
-                    )}
-                </div>
-
-                <div>
-                    <button className='btn-secondary'>
-                        <FaImage /> Set Image
-                    </button>
-                </div>
-
                 <input type='submit' value='Update Event' className='btn' />
             </form>
+
+            <h2>Event Image</h2>
+            <div style={{ position: 'relative', height: '250px' }}>
+                {imagePreview ? (
+                    <Image
+                        src={
+                            evt.image &&
+                            evt.image.data &&
+                            evt.image.data.attributes.formats.medium.url
+                        }
+                        layout='fill'
+                        objectFit='contain'
+                        alt='img'
+                    />
+                ) : (
+                    <div>
+                        <h1>No image uploaded</h1>
+                    </div>
+                )}
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+                <button
+                    className='btn-secondary'
+                    style={{ marginTop: '10px' }}
+                    onClick={() => setShowModal(true)}>
+                    <FaImage /> Set Image
+                </button>
+            </div>
+
+            <Modal show={showModal} onClose={() => setShowModal(false)}>
+                Image Upload
+            </Modal>
         </Layout>
     );
 }
