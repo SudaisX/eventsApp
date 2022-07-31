@@ -10,6 +10,7 @@ import { API_URL } from '@/config/index';
 import styles from '@/styles/Form.module.css';
 import Layout from '@/components/Layout';
 import Modal from '@/components/Modal';
+import ImageUpload from '@/components/ImageUpload';
 
 export default function EditEvenPage({ evt }) {
     const router = useRouter();
@@ -23,7 +24,7 @@ export default function EditEvenPage({ evt }) {
         description: evt.description,
     });
     const [imagePreview, setImagePreview] = useState(
-        evt.image ? evt.image.data.attributes.formats.thumbnail.url : null
+        evt.image && evt.image.data ? evt.image.data.attributes.formats.thumbnail.url : null
     );
     const [showModal, setShowModal] = useState(false);
 
@@ -59,8 +60,17 @@ export default function EditEvenPage({ evt }) {
         setValues({ ...values, [name]: value });
     };
 
+    const imageUploaded = async () => {
+        console.log(evt);
+        const res = await fetch(`${API_URL}/api/events/${evt.id}?populate=*`);
+        const { data } = await res.json();
+
+        setImagePreview(data.attributes.image.data.attributes.formats.thumbnail.url);
+        setShowModal(false);
+    };
+
     return (
-        <Layout title='Add Event | Events App'>
+        <Layout title='Edit Event | Events App'>
             <Link href='/events'>Go Back</Link>
             <h1>Edit Event</h1>
             <ToastContainer />
@@ -162,7 +172,7 @@ export default function EditEvenPage({ evt }) {
             </div>
 
             <Modal show={showModal} onClose={() => setShowModal(false)}>
-                Image Upload
+                <ImageUpload evtId={evt.id} imageUploaded={imageUploaded} />
             </Modal>
         </Layout>
     );

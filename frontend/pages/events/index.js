@@ -1,8 +1,12 @@
 import { API_URL } from '@/config/index';
 import Layout from '@/components/Layout';
 import EventItem from '@/components/EventItem';
+import Link from 'next/link';
+const PAGE_SIZE = 5;
 
-const EventsPage = ({ events }) => {
+const EventsPage = ({ events, page, total }) => {
+    const lastPage = Math.ceil(total / PAGE_SIZE);
+
     return (
         <Layout>
             <h1>Events</h1>
@@ -11,18 +15,37 @@ const EventsPage = ({ events }) => {
             ) : (
                 events.map((evt) => <EventItem key={evt.id} evt={evt} />)
             )}
+
+            {page > 1 && (
+                <Link href={`/events?page=${page - 1}`}>
+                    <a className='btn-secondary'>Prev</a>
+                </Link>
+            )}
+            {page < lastPage && (
+                <Link href={`/events?page=${page + 1}`}>
+                    <a className='btn-secondary'>Next</a>
+                </Link>
+            )}
         </Layout>
     );
 };
 
 export default EventsPage;
 
-export async function getStaticProps() {
-    const res = await fetch(`${API_URL}/api/events?sort=date:asc&populate=*`);
-    const { data } = await res.json();
+export async function getServerSideProps({ query: { page = 1 } }) {
+    console.log(page);
+
+    const res = await fetch(
+        `${API_URL}/api/events?sort=date:asc&populate=*&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}&pagination[withCount]=true`
+    );
+    const {
+        data,
+        meta: {
+            pagination: { total },
+        },
+    } = await res.json();
     const events = data.map((evt) => ({ id: evt.id, ...evt.attributes }));
     return {
-        props: { events },
-        revalidate: 1,
+        props: { events, page: +page, total },
     };
 }
